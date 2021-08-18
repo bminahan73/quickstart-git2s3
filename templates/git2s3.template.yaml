@@ -558,7 +558,12 @@ Resources:
             - Effect: Allow
               Action:
                   - 'ec2:CreateNetworkInterfacePermission'
-              Resource: !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*'
+              # hard-coded Account IDs are internal AWS accounts used by the CodeBuild service
+              Resource:
+                - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*'
+                - 'arn:aws:ec2:*:201349592320:network-interface/*'
+                - 'arn:aws:ec2:*:570169269855:network-interface/*'
+                - 'arn:aws:ec2:*:964771811575:network-interface/*'
 
   GitPullRole:
     Type: AWS::IAM::Role
@@ -689,7 +694,7 @@ Resources:
                       EOF
                     - chmod 600 ~/.ssh/id_rsa
                     - echo "Cloning the repository $GitUrl on branch $Branch"
-                    - git clone --single-branch --depth=1 --branch $Branch $GitUrl .
+                    - git clone --single-branch --branch $Branch $GitUrl .
                     - ls
                     - echo "Zipping the checked out contents"
                     - |
